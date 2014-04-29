@@ -18,7 +18,7 @@ Puppet::Type.type(:sysctl).provide(:linux) do
   def self.instances
     sysctlconf=lines || []
     instances = []
-    sysctloutput = sysctl('-a').split(/\r?\n/)
+    sysctloutput = sysctl('-a').split(/\r?\n/).reject { |n| n =~ /error: permission denied on key/ }
     sysctloutput.each do |line|
       #next if line =~ /dev.cdrom.info/
       if line =~ /=/

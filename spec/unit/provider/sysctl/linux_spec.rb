@@ -5,12 +5,13 @@ provider_class = Puppet::Type.type(:sysctl).provider(:linux)
 describe provider_class do
   subject { provider_class }
 
-  let (:lines) { '
+  let (:lines) { "
 net.ipv6.route.gc_elasticity = 0
 net.ipv6.route.mtu_expires = 600
 net.ipv6.route.min_adv_mss = 1
+error: permission denied on key 'net.ipv6.route.flush'
 vm.swappiness = 0
-'}
+"}
   let(:resource) do
     Puppet::Type.type(:sysctl).new(
       :name     => 'vm.swappiness',
@@ -25,15 +26,8 @@ vm.swappiness = 0
     provider
   end
 
-  let (:sysctloutput) { "net.ipv6.route.gc_elasticity = 0\nnet.ipv6.route.mtu_expires = 600\nnet.ipv6.route.min_adv_mss = 1\nvm.swappiness = 0\n" }
-#  let(:sysctloutput) do
-#    <<-OUTPUT
-#net.ipv6.route.gc_elasticity = 0
-#net.ipv6.route.mtu_expires = 600
-#net.ipv6.route.min_adv_mss = 1
-#vm.swappiness = 0
-#OUTPUT
-#  end
+  let (:sysctloutput) { "net.ipv6.route.gc_elasticity = 0\nnet.ipv6.route.mtu_expires = 600\nnet.ipv6.route.min_adv_mss = 1\nerror: permission denied on key 'net.ipv6.route.flush'\nvm.swappiness = 0\n" }
+
   let(:sysctlconf_edit) do
     <<-OUTPUT
 net.ipv6.route.gc_elasticity = 0
